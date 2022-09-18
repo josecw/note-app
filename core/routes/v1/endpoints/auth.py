@@ -40,7 +40,7 @@ async def login(user: User):
             await res.save()
             return signJWT(user.username)
     
-    return JSONResponse(status_code=status.HTTP_200_OK,
+    return JSONResponse(status_code=status.HTTP_404_NOT_FOUND,
         content={"message": f"login failed"})
 
 @router.post("/logout", tags=["auth"])
