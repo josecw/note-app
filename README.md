@@ -22,6 +22,7 @@ The components below are applied in the application architectures:
 - [MongoDB Atlas]()
 - Nginx
 - Docker
+- Minikube
 
 ## Setup
 
@@ -46,6 +47,7 @@ JWT_EXPIRY=<input timeput in seconds, default to 600>
 
 ## Run  
 The app is built with containerise in mind. To build and run the app, simpliy run command below from root directory:
+### Docker
 ```
 docker-compose up --build -d 
 ```
