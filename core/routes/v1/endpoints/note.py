@@ -63,7 +63,7 @@ async def update(id: int, req: NoteUpdate, current_user: User = Depends(get_curr
     return note
         
 
-# delete
+# delete by id
 @router.delete("/{id}")
 async def delete(id: int, current_user: User = Depends(get_current_user)):
 
@@ -73,6 +73,14 @@ async def delete(id: int, current_user: User = Depends(get_current_user)):
 
     await note.delete()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+# delete all
+@router.delete("/")
+async def delete_all(current_user: User = Depends(get_current_user)):
+
+    await Note.find_many(Note.owners == current_user.username).delete_many()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
         
 # list by Tag
 @router.get("/tag/{tag}",  
