@@ -14,4 +14,4 @@ app.include_router(v1_api, prefix='/v1')
 
 @app.get("/", include_in_schema=False)
 async def read_root() -> dict:
-    return {"message": "Note App is up"}
+    return {"message": "Note-App is live"}
