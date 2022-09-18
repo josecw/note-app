@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  web:
+    container_name: web
+    image: nginx:alpine
+    depends_on:
+      - note-app
+    ports:
+      - "80:80"
+    volumes:
+      # volume mount:"Host OS path:Path in the container"
+      - ./web/conf.d:/etc/nginx/conf.d
+    networks:
+      - nginx_network
+
+  note-app:
+    container_name: app
+    image: note-api #Specify the name of the Docker image to be built
+    build:
+      context: ./note-api
+      dockerfile: Dockerfile
+    expose:
+      - 8000
+    networks:
+      - nginx_network
+    #For example, if you want to edit the source code in real time`volumes`Convenient to mount with
+    # volumes:
+    #   - ./app/app:/app/app
+    #of the app container`CMD`To overwrite`command`use
+    # command: "uvicorn app.main:app --reload --host 0.0.0.0"
+
+networks:
+  nginx_network:
+    driver: bridge
