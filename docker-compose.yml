@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  web:
+    container_name: web
+    image: nginx:alpine
+    depends_on:
+      - app
+    ports:
+      - "80:8080"
+    volumes:
+      - ./web/conf.d:/etc/nginx/conf.d
+    networks:
+      - nginx_network
+
+  app:
+    container_name: app
+    image: note-api #Specify the name of the Docker image to be built
+    build:
+      context: ./note-api
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    expose:
+      - 8000
+    networks:
+      - nginx_network
+
+networks:
+  nginx_network:
+    driver: bridge
