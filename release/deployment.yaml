@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: note-api
+  namespace: sandbox
+  labels:
+    module: note-api
+spec:
+  selector:
+    matchLabels:
+      app: note-api
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: note-api
+      name: note-api
+    spec:
+      containers:
+        - name: note-api
+          image: leecw/note-api:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DB_SOCKET_TIMEOUT
+              value: "2000"
+            - name: DB_CONNECT_TIMEOUT
+              value: "2000"
+            - name: JWT_ALGO
+              value: "HS256"
+            - name: JWT_EXPIRY
+              value: "600"
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: note-secret
+                  key: DB_HOST
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: note-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: note-secret
+                  key: DB_PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: note-secret
+                  key: DB_NAME
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: note-secret
+                  key: JWT_SECRET
+
+
+# create a service
+apiVersion: v1
+kind: Service
+metadata:
+  name: note-api
+  namespace: sandbox
+  labels:
+    app: note-api
+    module: note
+spec:
+  type: NodePort
+  selector:
+    app: note-api
+  ports:
+    - port: 80
+      targetPort: 8000
+      protocol: TCP
