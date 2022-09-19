@@ -56,7 +56,7 @@ Once the containers are running, access app via `http://localhost/docs`
 ## Test
 Run the following command for test:
 ```
-pytest -c pytest.ini tests/test_note.py
+python -m pytest -c pytest.ini tests/test_note.py
 ```
 
 [FastAPI]: https://fastapi.tiangolo.com "FastAPI web framework"
