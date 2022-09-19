@@ -4,10 +4,10 @@ metadata:
   name: note-ingress
   namespace: sandbox
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-    - host: kubernetes.docker.internal
+    - host: my-note-app.com
       http:
         paths:
           - path: /
@@ -16,4 +16,4 @@ spec:
               service:
                 name: note-api
                 port:
-                  number: 8000
+                  number: 80
