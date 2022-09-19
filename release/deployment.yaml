@@ -1,10 +1,12 @@
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: note-api
   namespace: sandbox
   labels:
-    module: note-api
+    module: note
 spec:
   selector:
     matchLabels:
@@ -18,7 +20,7 @@ spec:
     spec:
       containers:
         - name: note-api
-          image: leecw/note-api:latest
+          image: josecw/note-api:latest
           imagePullPolicy: Never
           ports:
             - containerPort: 8000
@@ -57,6 +59,7 @@ spec:
                   name: note-secret
                   key: JWT_SECRET
 
+---
 
 # create a service
 apiVersion: v1
