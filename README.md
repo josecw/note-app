@@ -93,8 +93,10 @@ As pipeline is not available in the repo, please follow the steps in `Setup` to 
 
 ## Test
 Run the following command for test:
+(Setup python environment before run test)
 ```
-python -m pytest -c pytest.ini tests/test_note.py
+cd note-api
+pytest -c pytest.ini
 ```
 
 [FastAPI]: https://fastapi.tiangolo.com "FastAPI web framework"
