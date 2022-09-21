@@ -24,11 +24,13 @@ The components below are applied in the application architectures:
 - Docker
 - Minikube
 
-## Setup for Docker
-
+## Setup for MongoDB  
 1. Setup MongoDB Atlas database
 2. Setup custom role with all collection actions on `notes` and `users` collection, then assign to anew database user. 
-3. Create `.env` in root directory with format below for running with Docker:
+3. Configure IP whitelisting at `Network Access` from left panel.
+
+## Setup for Docker
+Create `.env` in root directory with format below for running with Docker:
 ```
 #Database Settings
 DB_HOST=<replace with mongodb host name>
@@ -46,7 +48,7 @@ JWT_EXPIRY=<input timeput in seconds, default to 600>
 ```
 
 ### Run as Docker
-The app is built with container in mind. There are 2 options on how to run the app. 
+The app is built with container in mind.  
 To build and run the app, simpliy run command below from root directory:
 ```
 docker-compose up --build -d 
