@@ -112,6 +112,7 @@ venv.bak/
 .DS_Store
 MISSION.md
 secret.yaml
+.vscode
 
 # Spyder project settings
 .spyderproject
