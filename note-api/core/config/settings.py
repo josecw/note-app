@@ -2,13 +2,24 @@ from ctypes import cast
 from email.policy import default
 from decouple import config
 
-db_host = config('DB_HOST')
-db_user = config('DB_USER')
-db_pass = config('DB_PASSWORD')
-db_name = config('DB_NAME')
-db_socket_timeout = config('DB_SOCKET_TIMEOUT', cast=int, default=2000)
-db_connect_timeout = config('DB_CONNECT_TIMEOUT', cast=int, default=2000)
+# App
+HOST = config('HOST', default='0.0.0.0')
+PORT = config('PORT', cast=int, default=8000)
+DEBUG_MODE = config('DEBUG_MODE', cast=bool, default=False)
+LOG_LEVEL = config('LOG_LEVEL', default='INFO')
 
-jwt_secret = config('JWT_SECRET')
-jwt_algo = config('JWT_ALGO')
-jwt_expiry = config('JWT_EXPIRY', cast=int, default=600)
+# MongoDB
+DB_HOST = config('DB_HOST')
+DB_USER = config('DB_USER')
+DB_PASS = config('DB_PASSWORD')
+DB_NAME = config('DB_NAME')
+DB_TIMEOUT = config('DB_TIMEOUT', cast=int, default=2000)
+
+
+JWT_SECRET = config('JWT_SECRET')
+JWT_ALGO = config('JWT_ALGO')
+JWT_EXPIRY = config('JWT_EXPIRY', cast=int, default=600)
+
+REDIS_HOST = config('REDIS_HOST')
+REDIS_PASS = config('REDIS_PASSWORD')
+REDIS_PORT = config('REDIS_PORT')
