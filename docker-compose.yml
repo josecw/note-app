@@ -5,10 +5,12 @@ services:
       image: redis:alpine3.16
       restart: always
       ports:
-        - '6379:6379'
+        - "6379:6379"
       command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
       environment:
         - REDIS_PASSWORD=${REDIS_PASSWORD}
+      env_file:
+        - .env
       volumes: 
         - cache:/data
       networks:
