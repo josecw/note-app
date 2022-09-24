@@ -32,6 +32,12 @@ The components below are applied in the application architectures:
 ## Setup for Docker
 Create `.env` in root directory with format below for running with Docker:
 ```
+# APP Settings
+HOST=<replace with host name, default 0.0.0.0 for running in local>
+PORT=<replace with target port, default 8000 for running in local>
+DEBUG_MODE=<indicate if the app running in development or debug mode, default True>
+LOG_LEVEL=INFO
+
 #Database Settings
 DB_HOST=<replace with mongodb host name>
 DB_USER=<replace with mongodb database username>
@@ -44,6 +50,11 @@ DB_CONNECT_TIMEOUT=<input timeput in miliseconds>
 JWT_SECRET=<Replace with random hash values>
 JWT_ALGO=HS256
 JWT_EXPIRY=<input timeput in seconds, default to 600>
+
+# REDIS
+REDIS_HOST=<replace with redis host name or ip. Defaulto to redis if running in Docker>
+REDIS_PORT=6379
+REDIS_PASSWORD=<replace with redis password. The password will configure into redis server>
 
 ```
 
