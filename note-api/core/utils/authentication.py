@@ -1,17 +1,18 @@
-import email
+
 import time
 from typing import Dict
 from jose import JWTError, jwt
 
 from fastapi import Request, HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.encoders import jsonable_encoder
 
-from core.config.settings import jwt_secret, jwt_algo, jwt_expiry
+from core.config import settings
 from core.models.auth import TokenData
 from core.models.user import User
 
-JWT_SECRET = jwt_secret
-JWT_ALGORITHM = jwt_algo
+JWT_SECRET = settings.JWT_SECRET
+JWT_ALGORITHM = settings.JWT_ALGO
 
 
 def token_response(token: str):
@@ -19,19 +20,19 @@ def token_response(token: str):
         "token": token
     }
 
-def signJWT(user_id: str) -> Dict[str, str]:
-    payload = {
-        "user_id": user_id,
-        "expires": time.time() + jwt_expiry
-    }
-    token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+def signJWT(tokenData: TokenData) -> Dict[str, str]:
 
-    return token_response(token)
+    jwt_token = jwt.encode(jsonable_encoder(tokenData), JWT_SECRET, algorithm=JWT_ALGORITHM)
 
-def decodeJWT(token: str) -> dict:
+    return token_response(jwt_token)
+
+
+def decodeJWT(token: str) -> Dict:
     try:
-        decoded_token = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-        return decoded_token if decoded_token["expires"] >= time.time() else None
+        decoded_token = jwt.decode(
+            token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+
+        return decoded_token if decoded_token["expired_dt"] >= time.time() is not None else None
     except:
         return {}
 
@@ -44,24 +45,26 @@ class JWTBearer(HTTPBearer):
         credentials: HTTPAuthorizationCredentials = await super(JWTBearer, self).__call__(request)
         if credentials:
             if not credentials.scheme == "Bearer":
-                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, 
-                                        detail="Invalid Token")
-            if not self.verify_jwt(credentials.credentials):
-                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, 
-                                        detail="Invalid Token")
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                                    detail="Invalid Token")
+            if not await self.verify_jwt(credentials.credentials):
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                                    detail="Invalid Token")
             return credentials.credentials
         else:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, 
-                                        detail="Invalid Token")
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                                detail="Invalid Token")
 
-    def verify_jwt(self, jwtoken: str) -> bool:
+    async def verify_jwt(self, token: str) -> bool:
         isTokenValid: bool = False
 
         try:
-            payload = decodeJWT(jwtoken)
+            payload = decodeJWT(token)
+            username = payload.get('username')
+            tokenData = await TokenData.select(ids=[username])
         except:
-            payload = None
-        if payload:
+            tokenData = None
+        if tokenData:
             isTokenValid = True
         return isTokenValid
 
@@ -69,21 +72,18 @@ class JWTBearer(HTTPBearer):
 async def get_current_user(token: str = Depends(JWTBearer())):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
+        detail="Invalid Credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
 
     try:
-        
-        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-        username: str = payload.get("user_id")
 
-        if username is None:
-            raise credentials_exception
-        token_data = TokenData(username=username)
+        payload = decodeJWT(token)
+        username: str = payload.get("username")
+        
     except JWTError:
         raise credentials_exception
-    user =await User.find_one(User.username == token_data.username)
+    user = await User.find_one(User.username == username)
     if user is None:
         raise credentials_exception
     return user
