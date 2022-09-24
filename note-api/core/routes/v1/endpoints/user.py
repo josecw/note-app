@@ -1,11 +1,7 @@
-from passlib.hash import pbkdf2_sha256
-from typing import List
-
-from fastapi import APIRouter, status, Body, Depends, HTTPException
-from fastapi.responses import Response, JSONResponse
+from fastapi import APIRouter, Depends
 
 from core.models.user import User
-from core.utils.authentication import signJWT, JWTBearer, get_current_user
+from core.utils.authentication import get_current_user
 
 router = APIRouter()
 
