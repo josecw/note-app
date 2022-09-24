@@ -14,11 +14,6 @@ async def on_startup():
     await init_db(app.db)
     app.state.redis = await redis_pool()
 
-
-# @app.on_event("shutdown")
-# async def close_redis():
-#     await app.state.redis.close()
-
 app.include_router(v1_api, prefix='/v1')
 
 
